@@ -9,7 +9,7 @@
 * It is important to note that my and Polina Semenova's Midterm will be different.<br>
 
 ### Hosting
-All `.rmd` files (R markdown) were knit into `.html files`. These files are hosted on github and the links for HW, Midterm, and the Exam are below.
+All `.rmd` files (R markdown) were knit into `.html` files. These files are hosted on github and the links for HW, Midterm, and the Exam are below.
 
 * Homework
   * [Homework 2](https://mamoore1440.github.io/DS202/Homework/Homework%202/Homework-2.html)
