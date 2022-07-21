@@ -1,0 +1,146 @@
+---
+title: "Homework 6"
+author: "Polina Semenova"
+date: "3/9/2022"
+output: html_document
+---
+
+Team Members: Michael Moore, Kateryna Mykhaylova <br>
+Git Repo Link: https://github.com/psemenova/DS202 <br>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(classdata)
+library(ggplot2)
+```
+
+```{r}
+happy <- readRDS("data/happy.rds")
+```
+
+## Part one (cleaning)
+Answer each of the following questions using R code to get an answer. Write a separate code chunk for each variable, once all the data manipulation is done, show the values in a barchart or histogram and comment on the plot.<br> <br>
+
+
+1. Data cleaning: the values “IAP”, “DK” and “NA” all encode missing values. Replace all of these instances by the value NA. <br>
+```{r}
+happy[happy == "IAP"] <- NA
+happy[happy == "DK"] <- NA
+happy[happy == "NA"] <- NA
+#another way to do it -> happy = replace(happy, happy == "IAP", NA) {do for each one}
+```
+
+2. Check the type of the variable and cast into the right type (factor variable for categorical variables). For age, change “89 OR OLDER” to 89 and assume the variable should be numeric. <br>
+```{r}
+str(happy)
+happy$AGE[happy$AGE == "89 OR OLDER"] <- "89"
+happy$AGE = as.numeric(happy$AGE)
+```
+
+3. Bring all levels of factors into a sensible order. For marital you could e.g. order the levels according to average age. <br>
+```{r}
+happy$HAPPY = as.factor(happy$HAPPY) 
+happy$MARITAL = as.factor(happy$MARITAL)
+happy$HEALTH = as.factor(happy$HEALTH)
+happy$DEGREE = as.factor(happy$DEGREE)
+happy$SEX = as.factor(happy$SEX)
+happy$FINRELA = as.factor(happy$FINRELA)
+happy$PARTYID = as.factor(happy$PARTYID)
+
+happy = happy %>% mutate(DEGREE = factor(DEGREE, levels = c("LT HIGH SCHOOL","HIGH SCHOOL", "JUNIOR COLLEGE", "GRADUATE", 
+                                                            "BACHELOR"))) %>% 
+  mutate(FINRELA = factor(FINRELA, levels = c("FAR BELOW AVERAGE", "BELOW AVERAGE", "AVERAGE", "ABOVE AVERAGE", 
+                                              "FAR ABOVE AVERAGE"))) %>%
+  mutate(HEALTH= factor(HEALTH, levels = c("POOR", "FAIR", "EXCELLENT", "GOOD")))
+
+```
+
+#### Working with cleaned data from "classdata" library
+
+```{r}
+library(classdata)
+data("happy", package="classdata")
+head(happy)
+str(happy)
+```
+
+
+1. How do average happiness levels change over age? <br>
+```{r}
+happy.age = happy %>%
+  group_by(age) %>% 
+  summarise(m.age = mean(as.numeric(happy), na.rm  = TRUE))
+
+happy.age %>% ggplot(aes(x = age, y = m.age)) + geom_point()
+```
+
+2. Are Republicans or Democrats happier? Compare average happiness levels over partyid.<br>
+```{r}
+happy.party = happy %>%
+  group_by(partyid) %>%
+  summarise(m.partyid = mean(as.numeric(happy), na.rm  = TRUE))
+
+happy.party %>%  ggplot(aes(x = partyid)) + geom_bar(aes(weight = m.partyid))
+```
+
+3. How are financial relations associated with average happiness levels? Is this association different for men and women? <br>
+```{r}
+happy.finrela = happy %>%
+  group_by(finrela, sex) %>%
+  summarise(m.finrela = mean(as.numeric(happy), na.rm  = TRUE))
+
+happy.finrela %>%  ggplot(aes(x = finrela, fill = sex)) + geom_bar(aes(weight = m.finrela), position = position_dodge2())
+```
+4. 
+
+## Part two (individual exploration)
+Investigate the relationship between happiness and two other variables in the data. Find a visualization that captures the relationship and write a paragraph to describe it. <br>
+
+Each member should study a different question (choose different variables to investigate). <br>
+
+Upload your answers and the data set to the repository. Discuss and refine answers as a team. <br>
+
+#### Polina Semenova
+Health and Sex <br>
+**Answer: The people with the excellent health are the happiest. As well as the males are a little more happy than females in the excellent and good categories. The better the health the more happy people are. **
+```{r}
+happy.health.age = happy %>%
+  group_by(health, sex) %>%
+  summarise(m.happy = mean(as.numeric(happy), na.rm  = TRUE)) %>%
+  arrange(m.happy)
+
+happy.health.age %>%  ggplot(aes(x = health, fill = sex)) + 
+  geom_bar(aes(weight = m.happy), position = position_dodge2()) +
+  labs(title = "", y = "Happiness", x = "Health")
+```
+
+
+#### Michael Moore
+partyid and degree <br>
+**Answer: Based on the bar chart below, we can make a couple of assumptions based on the data. Firstly we can see that partyid is a strong indicator of happiness. We can see that the strong republicans are the happiest and that the farther left your partyid is the less happy your are. However we can see a unique trend in the data: near dems are the least happy. On top of this if you go left more after near dem it indicates you will be happier. On top of this distinctive trend we can see the an individuals happiness is also strongly indicated by their education. People with graduate level education are happier on average than people with less education. Overall, There is a lot of interesting information we can glean from the chart.**
+```{r}
+happy.degree.age = happy %>%
+  group_by(partyid, degree) %>%
+  summarise(m.happy = mean(as.numeric(happy), na.rm  = TRUE)) %>%
+  arrange(m.happy)
+
+happy.degree.age %>%  ggplot(aes(x = partyid, fill = degree)) + 
+  geom_bar(aes(weight = m.happy), position = position_dodge2()) +
+  labs(title = "", y = "Happiness", x = "Degree") +
+  coord_flip()
+```
+
+
+#### Kateryna Mykhaylova
+Age and Marital status <br>
+**Answer: This bar graph shows the relationship between the marital status and the happiness level during different ages. We can tell that generally, people are happier married when they are older than younger, and also generally happier widowed younger than older. We can see that the separated trend is around the same for all ages, while it also looks like poeple are also generally happier divorced or never married older.**
+```{r}
+happy.health.age = happy %>%
+  group_by(age, marital) %>%
+  summarise(m.happy = mean(as.numeric(happy), na.rm  = TRUE)) %>%
+  arrange(m.happy)
+happy.health.age %>%  ggplot(aes(x = age, fill = marital)) + 
+  geom_bar(aes(weight = m.happy), position = position_dodge2()) +
+  labs(title = "", y = "Happiness", x = "Marital Status")
+```
