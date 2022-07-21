@@ -28,3 +28,5 @@ All .rmd files (R markdown) were knit into .html files. These files are hosted o
   * [Homework 11](https://mamoore1440.github.io/DS202/Final%20Project/Homework%2011/Homework-11.html)
   * [Final Project](https://mamoore1440.github.io/DS202/Final%20Project/DS202Final.html)
   
+### Polina's Repo
+This Repo is originally a fork of Polina's DS202 Repo. Her repo can be found [here](https://github.com/psemenova/DS202).
