@@ -1,4 +1,5 @@
-# ISU DS202 
+# ISU DS202 <br>
+### Overview
 * Repo for Class Notes, Homework, Midterm, and Final Projects
 * Main group members where Polina Semenova and Michael Moore. Kateryna Mykhaylova shows up once or twice.
 * All class notes are from Polina Semenova.
